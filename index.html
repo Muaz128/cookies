@@ -3,35 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proxy Server</title>
+<title>Cookie Reader</title>
 </head>
 <body>
-<h1>Access Cookies from Other Websites</h1>
-<form id="proxyForm">
-  <label for="urlInput">Enter URL:</label><br>
-  <input type="text" id="urlInput" name="urlInput"><br>
-  <button type="submit">Submit</button>
-</form>
+<h1>Cookie Reader</h1>
 <div id="cookies"></div>
 
 <script>
-document.getElementById('proxyForm').addEventListener('submit', function(event) {
-  event.preventDefault(); // Prevent default form submission
-  const url = document.getElementById('urlInput').value.trim();
-  
-  // Make AJAX request to server-side code
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', '/proxy?url=' + encodeURIComponent(url), true);
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-      const cookies = JSON.parse(xhr.responseText);
-      displayCookies(cookies);
-    }
-  };
-  xhr.send();
-});
+// Function to get cookies
+function getCookies() {
+  const cookies = document.cookie.split(';');
+  const cookieData = {};
+  cookies.forEach(cookie => {
+    const parts = cookie.split('=');
+    const name = parts.shift().trim();
+    const value = parts.join('=').trim();
+    cookieData[name] = value;
+  });
+  return cookieData;
+}
 
-function displayCookies(cookies) {
+// Function to display cookies
+function displayCookies() {
+  const cookies = getCookies();
   const cookiesDiv = document.getElementById('cookies');
   cookiesDiv.innerHTML = '<h2>Cookies:</h2>';
   if (Object.keys(cookies).length === 0) {
@@ -42,6 +36,9 @@ function displayCookies(cookies) {
     });
   }
 }
+
+// Call displayCookies on page load
+window.onload = displayCookies;
 </script>
 </body>
 </html>
