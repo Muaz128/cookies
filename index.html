@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proxy Server</title>
+</head>
+<body>
+<h1>Access Cookies from Other Websites</h1>
+<form id="proxyForm">
+  <label for="urlInput">Enter URL:</label><br>
+  <input type="text" id="urlInput" name="urlInput"><br>
+  <button type="submit">Submit</button>
+</form>
+<div id="cookies"></div>
+
+<script>
+document.getElementById('proxyForm').addEventListener('submit', function(event) {
+  event.preventDefault(); // Prevent default form submission
+  const url = document.getElementById('urlInput').value.trim();
+  
+  // Make AJAX request to server-side code
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', '/proxy?url=' + encodeURIComponent(url), true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+      const cookies = JSON.parse(xhr.responseText);
+      displayCookies(cookies);
+    }
+  };
+  xhr.send();
+});
+
+function displayCookies(cookies) {
+  const cookiesDiv = document.getElementById('cookies');
+  cookiesDiv.innerHTML = '<h2>Cookies:</h2>';
+  if (Object.keys(cookies).length === 0) {
+    cookiesDiv.innerHTML += '<p>No cookies found.</p>';
+  } else {
+    Object.keys(cookies).forEach(name => {
+      cookiesDiv.innerHTML += `<p><strong>${name}:</strong> ${cookies[name]}</p>`;
+    });
+  }
+}
+</script>
+</body>
+</html>
